@@ -1,9 +1,5 @@
 #!/bin/ksh
 
-# Uses local source files beside this installer:
-#   ./neofelis.pl         required
-#   ./neofelis.desktop    optional
-
 set -u
 
 PROJECT="neofelis"
@@ -137,7 +133,7 @@ install_dependencies() {
 }
 
 validate_source() {
-    perl -e 'use strict; use warnings; use Gtk3 "-init"; exit 0;' >/dev/null 2>&1 || fail "Gtk3 Perl runtime validation failed"
+    perl -e 'use strict; use warnings; use Gtk3; exit 0;' >/dev/null 2>&1 || fail "Perl Gtk3 module load test failed"
     perl -c "${SOURCE_PATH}" >/dev/null || fail "Perl syntax validation failed for ${SOURCE_PATH}"
 
     if [ "${HAS_DESKTOP}" -eq 1 ] && command -v desktop-file-validate >/dev/null 2>&1; then
