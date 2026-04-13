@@ -10,7 +10,7 @@ use File::Path qw(make_path);
 use POSIX qw(setsid _exit);
 use IO::Handle ();
 use Encode qw(encode decode FB_CROAK);
-use Gtk3 '-init';
+use Gtk3;
 
 use constant TRUE  => 1;
 use constant FALSE => 0;
@@ -53,6 +53,11 @@ if ($OPT{clear_history}) {
         exit 0;
     }
     die "neofelis: failed to clear history: $err\n";
+}
+
+my $gtk_ready = Gtk3->init_check;
+if (!$gtk_ready) {
+    die "neofelis: failed to initialize GTK; run this from a graphical session or preserve DISPLAY/WAYLAND_DISPLAY and XAUTHORITY when using sudo\n";
 }
 
 unless ($OPT{no_history}) {
