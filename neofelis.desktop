@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Neofelis
+GenericName=Command Launcher
+Comment=Validated command launcher for Artix Linux
+Exec=neofelis
+Terminal=false
+Categories=Utility;GTK;System;
+Keywords=launcher;command;shell;terminal;gtk;perl;
+StartupNotify=false
