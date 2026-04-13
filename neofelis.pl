@@ -413,7 +413,24 @@ sub looks_shellish {
 
 sub shell_syntax_ok {
     my ($cmd) = @_;
+
+    open my $saved_stderr, '>&', \*STDERR or do {
+        debug_log("syntax check could not duplicate stderr: $!");
+        return 0;
+    };
+    open STDERR, '>', '/dev/null' or do {
+        debug_log("syntax check could not redirect stderr: $!");
+        return 0;
+    };
+
     my $rc = system('/bin/sh', '-n', '-c', $cmd);
+    my $restore_ok = open STDERR, '>&', $saved_stderr;
+    close $saved_stderr;
+
+    if (!$restore_ok) {
+        debug_log("syntax check could not restore stderr: $!");
+    }
+
     if ($rc == -1) {
         debug_log("syntax check failed to start: $!");
         return 0;
@@ -604,12 +621,11 @@ sub spawn_detached {
         if (($validation->{mode} || '') eq 'direct') {
             my @argv = split /\s+/, trim($command);
             exec { $validation->{exec} } @argv;
-            child_fail($writer, "exec failed: $!");
         }
         else {
             exec { '/bin/sh' } '/bin/sh', '-c', $command;
-            child_fail($writer, "exec failed: $!");
         }
+        child_fail($writer, "exec failed: $!");
     }
 
     close $writer;
